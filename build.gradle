@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 
 repositories {
     mavenCentral()
@@ -66,3 +67,13 @@ drivers.each { driver ->
 }
 
 task test(overwrite: true, dependsOn: drivers.collect { tasks["${it}Test"] })
+
+tasks.addRule("Pattern: testSingle<Name> will test **/<Name>Tests.class") {String taskName ->
+    if (taskName.startsWith("testSingle")) {
+        drivers.each {
+            tasks["${it}Test"].includes = ['**/' + taskName.substring(10) + 'Spec.class']
+        }
+        tasks.add(name: taskName).dependsOn test
+    }
+}
+

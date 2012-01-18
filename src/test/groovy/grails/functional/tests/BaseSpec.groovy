@@ -39,10 +39,14 @@ abstract class BaseSpec extends GebSpec{
 	def output
 	def project
     def processes = []
+    def cleanupDirectories = []
     
     void cleanup() {
         for(Process p in processes) {
             p.destroy()
+        }
+        for(File dir in cleanupDirectories) {
+            dir.deleteOnExit()
         }
         new File(grailsWorkDir).deleteOnExit()
         new File(outputDir).deleteOnExit()

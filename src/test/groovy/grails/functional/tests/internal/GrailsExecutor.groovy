@@ -17,12 +17,14 @@ class GrailsExecutor {
     }
 
     def createApp(String name) {
+        BaseSpec.projectWorkDir = System.getProperty("java.io.tmpdir")
         execute(
                 project,
                 "create-app"
                 ,
                 name)
         project = name
+        parent.cleanupDirectories << new File(BaseSpec.projectWorkDir, name)
         BaseSpec.upgradedProjects << name
     }
 
