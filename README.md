@@ -20,6 +20,20 @@ A basic test looks like:
 	            title == "Welcome to Grails"
 	    }
 	}
+	
+The above example creates a new project and tests it, deleting it on completion. To test an existing project you can instead use <code>BaseApplicationSpec</code>:
+
+	class RunAppSpec extends BaseApplicationSpec {
+		String application = "foo"
+		void "Test run-app starts correctly"() {
+	        when:"The home page is requested"
+	            go ""
+	        then:"The Grails welcome page is shown"
+	            title == "Welcome to Grails"			
+		}
+	}
+	
+The application needs to be created in the "apps" directory of the project before this test can be run.
 
 Tests are executed using standard Gradle test command:
 
@@ -29,4 +43,12 @@ Running a single test can be done with:
 
 	./gradlew testSingleRunApp
 	
-Where "RunApp" above is the test name
+Where "RunApp" above is the test name.
+
+Tests can also be run from the IDE. Just generate Eclipse or Intellij project files:
+
+	./gradlew eclipse
+	./gradlew idea
+	
+Import the project into your IDE and run the specs directly.
+
