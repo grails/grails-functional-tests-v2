@@ -2,6 +2,7 @@ package grails.functional.tests
 
 import geb.spock.GebSpec
 import grails.functional.tests.internal.GrailsExecutor
+import geb.Browser
 
 abstract class BaseSpec extends GebSpec{
     
@@ -52,6 +53,11 @@ abstract class BaseSpec extends GebSpec{
         }
         new File(grailsWorkDir).deleteOnExit()
         new File(outputDir).deleteOnExit()
+
+        // workaround for Geb bug which fails with NPE on cleanup if no browser created
+        if(browser == null) {
+            browser = new Browser()
+        }
     }
     
     def grails(Closure callable) {
@@ -71,7 +77,7 @@ abstract class BaseSpec extends GebSpec{
         process.waitForOrKill(PROCESS_TIMEOUT_MILLS)
         exitStatus = process.exitValue()
         output = outputBuffer.toString()
-        println output
+
         return exitStatus
 	}
 

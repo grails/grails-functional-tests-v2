@@ -6,11 +6,15 @@ package grails.functional.tests
 abstract class BaseApplicationSpec extends BaseSpec {
     
     abstract String getApplication()
+
+    boolean shouldStartApp() { true }
     
     void setup() {
         this.project = getApplication()
-        grails {
-            runApp()
+        if(shouldStartApp()) {
+            grails {
+                runApp()
+            }
         }
     }
 }
