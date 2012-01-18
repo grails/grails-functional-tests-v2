@@ -40,6 +40,7 @@ abstract class BaseSpec extends GebSpec{
 	def project
     def processes = []
     def cleanupDirectories = []
+    def port = BaseSpec.PORT
     
     void cleanup() {
         for(Process p in processes) {
@@ -88,7 +89,7 @@ abstract class BaseSpec extends GebSpec{
 	private Process createProcess(String project, CharSequence[] command) {
 		if (project != null && !(project in upgradedProjects)) { upgradeProject(project) }
 		
-		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.server.port.http=${PORT}", "-Dgrails.work.dir=${grailsWorkDir}", "--non-interactive"]
+		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.server.port.http=${port}", "-Dgrails.work.dir=${grailsWorkDir}", "--non-interactive"]
 		completeCommand.addAll(command.toList()*.toString())
 
         def toExecute = completeCommand as String[]

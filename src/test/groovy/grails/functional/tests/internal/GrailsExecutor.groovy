@@ -29,27 +29,29 @@ class GrailsExecutor {
     }
 
     def runApp() {
-       parent.browser.baseUrl = "http://localhost:${BaseSpec.PORT}/$project"
-       def process = executeAsync(project, "run-app")
+
+        while(Utils.isServerRunningOnPort(parent.port)) {
+            parent.port++
+        }
+        def process = executeAsync(project, "run-app")
         def buffer = new StringBuffer()
         process.consumeProcessOutput(buffer, buffer)
 
         int timeout = 0
         while(true) {
-            if(timeout > 15000) break
-            try {
-                def ss = new ServerSocket(BaseSpec.PORT)
-                ss.reuseAddress = true
-                ss.close()
-                timeout += 100
-                sleep( 100 )
-                continue
+            if(timeout > 15000) {
+                Assert.fail("Failed to start server after timeout")
             }
-            catch(IOException ie) {
+            if(Utils.isServerRunningOnPort(parent.port)) {
                 println buffer
                 break
             }
+            else {
+                timeout += 100
+                sleep( 100 )                
+            }
         }
+        parent.browser.baseUrl = "http://localhost:${parent.port}/$project"
         parent.processes << process
     }
 

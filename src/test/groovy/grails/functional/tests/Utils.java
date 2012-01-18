@@ -1,10 +1,32 @@
 package grails.functional.tests;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Utils {
+
+    public static boolean isServerRunningOnPort(int port) {
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            return false;
+        }
+        catch(IOException ie) {
+            return true;
+        }
+        finally {
+            try {
+                if(ss != null)
+                    ss.close();
+            } catch (IOException e) {
+                // ignore;
+            }
+        }
+    }
     /**
      * Retrieves the script name representation of the given class name.
      * For example MyFunkyGrailsScript would be my-funky-grails-script.
