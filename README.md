@@ -45,6 +45,10 @@ Running a single test can be done with:
 	
 Where "RunApp" above is the test name.
 
+By default the test suite tries to look for GRAILS_HOME in the directories ../grails-core or ../grails-master. If you prefer to tell the suite where Grails is you can do:
+
+	./gradlew -Dgrails.home=/path/to/grails test
+
 Tests can also be run from the IDE. Just generate Eclipse or Intellij project files:
 
 	./gradlew eclipse
