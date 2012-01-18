@@ -93,14 +93,18 @@ abstract class BaseSpec extends GebSpec{
 		completeCommand.addAll(command.toList()*.toString())
 
         def toExecute = completeCommand as String[]
-        println toExecute.inspect()
+        def dir
+        if(project)
+            dir = new File(projectWorkDir, project)
+        else
+            dir = new File(projectWorkDir)
+        
+        println "Running command: ${toExecute.join(" ")}"
+        println "Base directory: $dir"
 
         (Process)new ProcessBuilder(toExecute).with {
 			redirectErrorStream(true)
-			if(project)
-    			directory(new File(projectWorkDir, project))
-    		else
-    		   directory(new File(projectWorkDir))
+            directory(dir)
 			environment()["GRAILS_HOME"] = grailsHome
 			start()
 		}

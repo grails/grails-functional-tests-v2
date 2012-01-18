@@ -8,7 +8,7 @@ abstract class BaseApplicationSpec extends BaseSpec {
     abstract String getApplication()
     
     void setup() {
-        project = application
+        this.project = getApplication()
         grails {
             runApp()
         }
