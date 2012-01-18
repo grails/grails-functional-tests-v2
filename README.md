@@ -24,7 +24,7 @@ A basic test looks like:
 The above example creates a new project and tests it, deleting it on completion. To test an existing project you can instead use <code>BaseApplicationSpec</code>:
 
 	class RunAppSpec extends BaseApplicationSpec {
-		String application = "foo"
+		String getApplication() { "foo" }
 		void "Test run-app starts correctly"() {
 	        when:"The home page is requested"
 	            go ""
