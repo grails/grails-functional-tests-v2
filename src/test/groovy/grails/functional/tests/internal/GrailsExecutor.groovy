@@ -24,7 +24,7 @@ class GrailsExecutor {
                 ,
                 name)
         project = name
-        parent.cleanupDirectories << new File(BaseSpec.projectWorkDir, name)
+        parent.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
         BaseSpec.upgradedProjects << name
     }
 
@@ -39,7 +39,8 @@ class GrailsExecutor {
 
         int timeout = 0
         while(true) {
-            if(timeout > 15000) {
+            if(timeout > 30000) {
+                process.destroy()
                 Assert.fail("Failed to start server after timeout")
             }
             if(Utils.isServerRunningOnPort(parent.port)) {

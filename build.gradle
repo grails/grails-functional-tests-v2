@@ -50,8 +50,6 @@ drivers.each { driver ->
                 assert it.mkdirs()
             }	        
 	    }
-		maxParallelForks = 5
-		forkEvery = 10
 		testReportDir = file("$reportsDir/$name/tests")
 		testResultsDir = file("$buildDir/test-results/$name")
 		
@@ -59,6 +57,7 @@ drivers.each { driver ->
 		systemProperty "geb.env", driver
         systemProperty 'grailsHome', System.properties['grails.home'] ?:  new File('../grails-master').exists() ? new File('../grails-master').absolutePath : new File('../grails-core').absolutePath
         systemProperty 'grailsWorkDir',  grailsWorkDir.canonicalPath
+        systemProperty 'projectWorkDir',  projectWorkDir.canonicalPath
         systemProperty 'outputDir', outputDir.canonicalPath
 		
 		// If you wanted to set the baseUrl in your build…

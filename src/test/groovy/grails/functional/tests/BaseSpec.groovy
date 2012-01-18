@@ -11,7 +11,8 @@ abstract class BaseSpec extends GebSpec{
 	
 	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
 	static grailsWorkDir = requiredSysProp('grailsWorkDir', System.getProperty("java.io.tmpdir"))
-	static projectWorkDir = requiredSysProp('projectWorkDir', findChildOfRoot("apps"))
+    static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
+	static projectWorkDir = requiredSysProp('projectWorkDir', System.getProperty("java.io.tmpdir"))
 	static outputDir = requiredSysProp('outputDir',System.getProperty("java.io.tmpdir"))
 	
 	@Lazy static grailsVersion = {
@@ -89,15 +90,15 @@ abstract class BaseSpec extends GebSpec{
 	private Process createProcess(String project, CharSequence[] command) {
 		if (project != null && !(project in upgradedProjects)) { upgradeProject(project) }
 		
-		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.server.port.http=${port}", "-Dgrails.work.dir=${grailsWorkDir}", "--non-interactive"]
+		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.server.port.http=${port}", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive"]
 		completeCommand.addAll(command.toList()*.toString())
 
         def toExecute = completeCommand as String[]
         def dir
         if(project)
-            dir = new File(projectWorkDir, project)
+            dir = new File(projectsBaseDir, project)
         else
-            dir = new File(projectWorkDir)
+            dir = new File(projectsBaseDir)
         
         println "Running command: ${toExecute.join(" ")}"
         println "Base directory: $dir"
