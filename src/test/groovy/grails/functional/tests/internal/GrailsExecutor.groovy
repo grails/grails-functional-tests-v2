@@ -4,7 +4,6 @@ import grails.functional.tests.utils.Utils
 import grails.functional.tests.BaseSpec
 import org.junit.Assert
 import grails.functional.tests.utils.PortPool
-import org.apache.commons.io.FileUtils
 
 /**
  * Used to power the grails { } block within tests
@@ -34,17 +33,9 @@ class GrailsExecutor {
     def runApp(String app = null) {
 
         def port = parent.port ?: BaseSpec.PORT
-        def f = new File("${port}.port")
-
-
-        while(Utils.isServerRunningOnPort(port) && !f.exists()) {
+        while(Utils.isServerRunningOnPort(port)) {
             port++
-            f = new File("${BaseSpec.grailsWorkDir}/${port}.port")
         }
-        FileUtils.touch(f)
-        BaseSpec.cleanupFiles << f
-
-
         parent.port = port
         def project =  app ?: parent.project
         parent.project = project
@@ -59,7 +50,6 @@ class GrailsExecutor {
             if(timeout > timeoutMax) {
                 println buffer
                 process.destroy()
-                FileUtils.deleteQuietly(f)
                 Assert.fail("Failed to start server after timeout")
             }
             if(Utils.isServerRunningOnPort(port)) {
