@@ -50,6 +50,10 @@ drivers.each { driver ->
                 assert it.mkdirs()
             }	        
 	    }
+
+        // TODO: running tests in parallels problem atm for some reason
+//        maxParallelForks = 4
+//        forkEvery = 10
 		testReportDir = file("$reportsDir/$name/tests")
 		testResultsDir = file("$buildDir/test-results/$name")
 		

@@ -45,6 +45,7 @@ abstract class BaseSpec extends GebSpec{
 	def project
     static processes = []
     static cleanupDirectories = []
+    static cleanupFiles = []
     def port = BaseSpec.PORT
 
     void setup() {
@@ -66,6 +67,10 @@ abstract class BaseSpec extends GebSpec{
         for(File dir in cleanupDirectories) {
             silentDelete(dir)
         }
+        for(File file in cleanupFiles) {
+            FileUtils.deleteQuietly(file)
+        }
+        cleanupFiles.clear()
         cleanupDirectories.clear()
         silentDelete(new File(grailsWorkDir))
         silentDelete(new File(outputDir))
