@@ -59,6 +59,7 @@ drivers.each { driver ->
         systemProperty 'grailsWorkDir',  grailsWorkDir.canonicalPath
         systemProperty 'projectWorkDir',  projectWorkDir.canonicalPath
         systemProperty 'outputDir', outputDir.canonicalPath
+        systemProperty 'geb.build.reportsDir', "$buildDir/geb-reports"
 		
 		// If you wanted to set the baseUrl in your build…
 		// systemProperty "geb.build.baseUrl", "http://myapp.com"

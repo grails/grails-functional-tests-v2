@@ -5,9 +5,10 @@ import grails.functional.tests.internal.GrailsExecutor
 import geb.Browser
 import grails.functional.tests.utils.PortPool
 import org.apache.commons.io.FileUtils
+import geb.spock.GebReportingSpec
 
 @WebReport
-abstract class BaseSpec extends GebSpec{
+abstract class BaseSpec extends GebReportingSpec{
     
 	static PORT = 8184
 	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 5 minutes
@@ -18,6 +19,12 @@ abstract class BaseSpec extends GebSpec{
     static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
 	static projectWorkDir = requiredSysProp('projectWorkDir', System.getProperty("java.io.tmpdir"))
 	static outputDir = requiredSysProp('outputDir',System.getProperty("java.io.tmpdir"))
+    
+    static {
+        if(!System.getProperty("geb.build.reportsDir")) {
+            System.setProperty("geb.build.reportsDir",outputDir)
+        }
+    }
 	
 	@Lazy static grailsVersion = {
 		new File(grailsHome, "build.properties").withReader { def p = new Properties(); p.load(it); p.'grails.version' }
