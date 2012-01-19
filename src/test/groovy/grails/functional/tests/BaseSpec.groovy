@@ -4,6 +4,7 @@ import geb.spock.GebSpec
 import grails.functional.tests.internal.GrailsExecutor
 import geb.Browser
 import grails.functional.tests.utils.PortPool
+import org.apache.commons.io.FileUtils
 
 abstract class BaseSpec extends GebSpec{
     
@@ -61,7 +62,7 @@ abstract class BaseSpec extends GebSpec{
         }
 
         for(File dir in cleanupDirectories) {
-            dir.deleteOnExit()
+            FileUtils.deleteDirectory(dir)
         }
         new File(grailsWorkDir).deleteOnExit()
         new File(outputDir).deleteOnExit()
