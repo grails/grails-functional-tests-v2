@@ -15,13 +15,26 @@ abstract class BaseApplicationSpec extends BaseSpec {
     void setupSpec() {
         def app = getApplication()
         if(shouldStartApp()) {
-            grails {
-                runApp(app)
+            if(isDebug()) {
+                grailsDebug {
+                    runApp(app)
+                }
+
+            }
+            else {
+                grails {
+                    runApp(app)
+                }
             }
         }
     }
 
+    void cleanupSpec() {
+        def app = getApplication()
+        silentDelete(new File("$projectsBaseDir/$app/target"))
+    }
     void setup() {
         this.project = getApplication()
+        this.browser.baseUrl = "http://localhost:${port}/${getApplication()}"
     }
 }

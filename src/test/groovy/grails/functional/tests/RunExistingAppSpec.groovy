@@ -5,7 +5,6 @@ package grails.functional.tests
  */
 class RunExistingAppSpec extends BaseApplicationSpec{
 
-
     void "Test run-app starts correctly"() {
         when:"The home page is requested"
             go ""

@@ -11,7 +11,7 @@ import grails.functional.tests.utils.PortPool
 class GrailsExecutor {
     @Delegate BaseSpec parent
     def invokeMethod(String name, Object args) {
-        execute(
+        "${parent.debug ? 'executeDebug' : 'execute'}"(
                 project,
                 Utils.getCommandName(name),
                 *args)
@@ -30,22 +30,29 @@ class GrailsExecutor {
         BaseSpec.upgradedProjects << name
     }
 
-    def runApp() {
+    def runApp(String app = null) {
 
-        while(Utils.isServerRunningOnPort(parent.port)) {
-            parent.port++
+        def port = parent.port ?: BaseSpec.PORT
+        while(Utils.isServerRunningOnPort(port)) {
+            port++
         }
-        def process = executeAsync(project, "run-app")
+        parent.port = port
+        def project =  app ?: parent.project
+        parent.project = project
+        def process = debug ? executeDebugAsync( app ?: project, "run-app") : executeAsync( app ?: project, "run-app")
         def buffer = new StringBuffer()
         process.consumeProcessOutput(buffer, buffer)
 
         int timeout = 0
+        // allow longer to attach a debugger
+        def timeoutMax = parent.isDebug() ? 120000 : 60000
         while(true) {
-            if(timeout > 30000) {
+            if(timeout > timeoutMax) {
+                println buffer
                 process.destroy()
                 Assert.fail("Failed to start server after timeout")
             }
-            if(Utils.isServerRunningOnPort(parent.port)) {
+            if(Utils.isServerRunningOnPort(port)) {
                 println buffer
                 break
             }
@@ -54,7 +61,7 @@ class GrailsExecutor {
                 sleep( 100 )                
             }
         }
-        parent.browser.baseUrl = "http://localhost:${parent.port}/$project"
+        parent.browser.baseUrl = "http://localhost:${port}/${ app ?: project}"
         parent.processes << process
     }
 

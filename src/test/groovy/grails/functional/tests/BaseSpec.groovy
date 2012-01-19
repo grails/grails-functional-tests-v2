@@ -38,6 +38,7 @@ abstract class BaseSpec extends GebSpec{
     }
 
 
+    boolean debug
     def command
     def exitStatus
     def output
@@ -60,21 +61,35 @@ abstract class BaseSpec extends GebSpec{
         for(Process p in processes) {
             p.destroy()
         }
-
+        processes.clear()
+        
         for(File dir in cleanupDirectories) {
+            silentDelete(dir)
+        }
+        cleanupDirectories.clear()
+        silentDelete(new File(grailsWorkDir))
+        silentDelete(new File(outputDir))
+    }
+
+    protected silentDelete(File dir) {
+        if(dir.exists()) {
             try {
                 FileUtils.deleteDirectory(dir)
             } catch (e) {
                 // ignore
             }
         }
-        new File(grailsWorkDir).deleteOnExit()
-        new File(outputDir).deleteOnExit()
-
     }
-    
+
     def grails(Closure callable) {
         def executor = new GrailsExecutor(parent:this, project:project)
+        callable.delegate = executor
+        callable.resolveStrategy = Closure.DELEGATE_ONLY
+        callable.call()
+    }
+
+    def grailsDebug(Closure callable) {
+        def executor = new GrailsExecutor(parent:this, project:project, debug:true)
         callable.delegate = executor
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.call()
@@ -82,23 +97,37 @@ abstract class BaseSpec extends GebSpec{
     
 	
 	def execute(String project, CharSequence[] command) {
-		this.command = command.toList() + "--plainOutput"
-		def process = createProcess(project, *this.command)
-		def outputBuffer = new StringBuffer()
-		process.consumeProcessOutputStream(outputBuffer)
+        return executeInternal(false, command, project)
+	}
+
+    def executeDebug(String project, CharSequence[] command) {
+        return executeInternal(true, command, project)
+    }
+
+    private int executeInternal(boolean debug, CharSequence[] command, String project) {
+        this.command = command.toList() + "--plainOutput"
+        def process = createProcess(debug,project, * this.command)
+        def outputBuffer = new StringBuffer()
+        process.consumeProcessOutputStream(outputBuffer)
 
         process.waitForOrKill(PROCESS_TIMEOUT_MILLS)
         exitStatus = process.exitValue()
         output = outputBuffer.toString()
 
         return exitStatus
-	}
+    }
 
     Process executeAsync(String project, CharSequence[] command) {
         this.command = command.toList() + "--plainOutput"
-        def process = createProcess(project, *this.command)
+        def process = createProcess(false, project, *this.command)
         return process
-    }    
+    }
+
+    Process executeDebugAsync(String project, CharSequence[] command) {
+        this.command = command.toList() + "--plainOutput"
+        def process = createProcess(true, project, *this.command)
+        return process
+    }
 
 	def upgradeProject(project) {
 		upgradedProjects << project
@@ -107,10 +136,10 @@ abstract class BaseSpec extends GebSpec{
         assert result == 0
     }
 
-	private Process createProcess(String project, CharSequence[] command) {
+	private Process createProcess(boolean debug,String project, CharSequence[] command) {
 		if (project != null && !(project in upgradedProjects)) { upgradeProject(project) }
 		
-		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive"]
+		def completeCommand = ["${grailsHome}/bin/${debug ? 'grails-debug' : 'grails'}", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive"]
         if(port != null) {
             completeCommand << "-Dgrails.server.port.http=${port}"
         }
