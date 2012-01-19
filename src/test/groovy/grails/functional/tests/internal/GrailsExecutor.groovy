@@ -1,8 +1,9 @@
 package grails.functional.tests.internal
 
-import grails.functional.tests.Utils
+import grails.functional.tests.utils.Utils
 import grails.functional.tests.BaseSpec
 import org.junit.Assert
+import grails.functional.tests.utils.PortPool
 
 /**
  * Used to power the grails { } block within tests
@@ -25,6 +26,7 @@ class GrailsExecutor {
                 name)
         project = name
         parent.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
+        parent.browser.baseUrl = "http://localhost:${parent.port}/${parent.project}"
         BaseSpec.upgradedProjects << name
     }
 

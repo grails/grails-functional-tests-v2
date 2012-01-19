@@ -1,4 +1,4 @@
-package grails.functional.tests;
+package grails.functional.tests.utils;
 
 import java.io.IOException;
 import java.net.ServerSocket;

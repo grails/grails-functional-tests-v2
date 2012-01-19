@@ -3,6 +3,7 @@ package grails.functional.tests
 import geb.spock.GebSpec
 import grails.functional.tests.internal.GrailsExecutor
 import geb.Browser
+import grails.functional.tests.utils.PortPool
 
 abstract class BaseSpec extends GebSpec{
     
@@ -25,39 +26,46 @@ abstract class BaseSpec extends GebSpec{
 		assert  value != null
         return value
 	}
-    
+
     static findChildOfRoot(String name) {
         def current = new File(".").canonicalFile
         while(current != null && !new File(current, "build.gradle").exists()) {
             current = current.parentFile
         }
-        
+
         return new File(current, "apps").absolutePath
     }
 
-    
-	def command
-	def exitStatus
-	def output
+
+    def command
+    def exitStatus
+    def output
 	def project
-    def processes = []
-    def cleanupDirectories = []
+    static processes = []
+    static cleanupDirectories = []
     def port = BaseSpec.PORT
-    
+
+    void setup() {
+        browser.baseUrl = "http://localhost:${port}/$project"
+    }
     void cleanup() {
+        // workaround for Geb bug which fails with NPE on cleanup if no browser created
+        if(browser == null) {
+            browser = new Browser()
+        }
+    }
+    void cleanupSpec() {
+
         for(Process p in processes) {
             p.destroy()
         }
+
         for(File dir in cleanupDirectories) {
             dir.deleteOnExit()
         }
         new File(grailsWorkDir).deleteOnExit()
         new File(outputDir).deleteOnExit()
 
-        // workaround for Geb bug which fails with NPE on cleanup if no browser created
-        if(browser == null) {
-            browser = new Browser()
-        }
     }
     
     def grails(Closure callable) {
@@ -89,14 +97,18 @@ abstract class BaseSpec extends GebSpec{
 
 	def upgradeProject(project) {
 		upgradedProjects << project
-		assert execute(project, 'upgrade', '--non-interactive') == 0
-		assert output.contains('Project upgraded')
-	}
+        def result = execute(project, 'upgrade', '--non-interactive')
+        assert output?.contains('Project upgraded')
+        assert result == 0
+    }
 
 	private Process createProcess(String project, CharSequence[] command) {
 		if (project != null && !(project in upgradedProjects)) { upgradeProject(project) }
 		
-		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.server.port.http=${port}", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive"]
+		def completeCommand = ["${grailsHome}/bin/grails", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive"]
+        if(port != null) {
+            completeCommand << "-Dgrails.server.port.http=${port}"
+        }
 		completeCommand.addAll(command.toList()*.toString())
 
         def toExecute = completeCommand as String[]
