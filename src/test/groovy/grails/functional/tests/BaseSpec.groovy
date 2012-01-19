@@ -6,6 +6,7 @@ import geb.Browser
 import grails.functional.tests.utils.PortPool
 import org.apache.commons.io.FileUtils
 
+@WebReport
 abstract class BaseSpec extends GebSpec{
     
 	static PORT = 8184
