@@ -1,10 +1,12 @@
 package grails.functional.tests.spring
 
 import grails.functional.tests.BaseApplicationSpec
+import spock.lang.Stepwise
 
 /**
  * Tests for Spring integration
  */
+@Stepwise
 class SpringBeanSpec extends BaseApplicationSpec{
     @Override
     String getApplication() {
