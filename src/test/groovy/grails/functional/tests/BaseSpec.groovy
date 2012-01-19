@@ -62,7 +62,11 @@ abstract class BaseSpec extends GebSpec{
         }
 
         for(File dir in cleanupDirectories) {
-            FileUtils.deleteDirectory(dir)
+            try {
+                FileUtils.deleteDirectory(dir)
+            } catch (e) {
+                // ignore
+            }
         }
         new File(grailsWorkDir).deleteOnExit()
         new File(outputDir).deleteOnExit()
