@@ -6,6 +6,7 @@ import geb.Browser
 import grails.functional.tests.utils.PortPool
 import org.apache.commons.io.FileUtils
 import geb.spock.GebReportingSpec
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 @WebReport
 abstract class BaseSpec extends GebReportingSpec{
@@ -45,7 +46,9 @@ abstract class BaseSpec extends GebReportingSpec{
         return new File(current, "apps").absolutePath
     }
 
-
+    /**
+     * Whether to start the servlet container in debug mode
+     */
     boolean debug
     def command
     def exitStatus
@@ -143,6 +146,15 @@ abstract class BaseSpec extends GebReportingSpec{
         def result = execute(project, 'upgrade', '--non-interactive')
         assert output?.contains('Project upgraded')
         assert result == 0
+    }
+
+    void assertStatus(code) {
+        if(browser.driver instanceof HtmlUnitDriver) {
+            statusCode == code
+        }
+    }
+    int getStatusCode() {
+        browser.driver.webClient.webWindows.first().enclosedPage.webResponse.statusCode
     }
 
 	private Process createProcess(boolean debug,String project, CharSequence[] command) {

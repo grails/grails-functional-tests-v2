@@ -77,7 +77,7 @@ class HyphenatedUrlsSpec extends BaseApplicationSpec{
 
     void "Test reverse mapping"() {
         when:"A controller is requested with reverse mapping linked"
-            go '/hyphenatedurls/admin/manage/index'
+            go 'admin/manage/index'
         then:"The correct content is returned"
             title == 'Admin Manage Controller'
             $('a', href:'/hyphenatedurls/admin/manage/index') != null
