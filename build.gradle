@@ -43,13 +43,13 @@ drivers.each { driver ->
         def grailsWorkDir = new File(buildDir, 'grails-work')
         def projectWorkDir = new File(buildDir, 'project-work')
         def outputDir = new File(buildDir, 'output')
-	    
-	    doFirst {
+
+        doFirst {
             [grailsWorkDir, projectWorkDir, outputDir].each {
                 it.deleteDir()
                 assert it.mkdirs()
             }	        
-	    }
+        }
         testReportDir = file("$reportsDir/$name/tests")
         testResultsDir = file("$buildDir/test-results/$name")
 
