@@ -51,6 +51,7 @@ abstract class BaseSpec extends GebReportingSpec{
     def exitStatus
     def output
 	def project
+    def projectDir
     static processes = []
     static cleanupDirectories = []
     def port = BaseSpec.PORT
@@ -163,6 +164,7 @@ abstract class BaseSpec extends GebReportingSpec{
         println "Running command: ${toExecute.join(" ")}"
         println "Base directory: $dir"
 
+        projectDir = dir
         (Process)new ProcessBuilder(toExecute).with {
 			redirectErrorStream(true)
             directory(dir)
