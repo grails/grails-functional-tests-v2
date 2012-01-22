@@ -3,7 +3,6 @@ package grails.functional.tests
 import geb.spock.GebSpec
 import grails.functional.tests.internal.GrailsExecutor
 import geb.Browser
-import grails.functional.tests.utils.PortPool
 import org.apache.commons.io.FileUtils
 import geb.spock.GebReportingSpec
 import org.openqa.selenium.htmlunit.HtmlUnitDriver

@@ -3,7 +3,6 @@ package grails.functional.tests.internal
 import grails.functional.tests.utils.Utils
 import grails.functional.tests.BaseSpec
 import org.junit.Assert
-import grails.functional.tests.utils.PortPool
 
 /**
  * Used to power the grails { } block within tests
