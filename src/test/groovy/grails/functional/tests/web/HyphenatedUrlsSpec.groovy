@@ -75,14 +75,6 @@ class HyphenatedUrlsSpec extends BaseApplicationSpec{
             contains '''Click <a href="/hyphenatedurls/second-demo/render-some-view">here</a> To execute the renderSomeView action in SecondDemoController.'''
     }
 
-    void "Test reverse mapping"() {
-        when:"A controller is requested with reverse mapping linked"
-            go 'admin/manage/index'
-        then:"The correct content is returned"
-            title == 'Admin Manage Controller'
-            $('a', href:'/hyphenatedurls/admin/manage/index') != null
-    }
-
     void "Test scaffolding"() {
         when:"The default scaffolded action is requested"
             go 'my-scaffolded'
