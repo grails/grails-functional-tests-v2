@@ -12,7 +12,7 @@ abstract class BaseApplicationSpec extends BaseSpec {
 
     boolean shouldStartApp(app) {
         def existingPort = System.getProperty("grails.app.port.$app")
-        println "EXISTING PORT = $existingPort"
+
         if(existingPort != null) {
             println "Application already started on port, waiting for availability..."
             port = existingPort.toInteger()

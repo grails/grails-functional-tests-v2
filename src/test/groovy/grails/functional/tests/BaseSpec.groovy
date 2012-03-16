@@ -17,6 +17,7 @@ abstract class BaseSpec extends GebReportingSpec{
 	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
 	static grailsWorkDir = requiredSysProp('grailsWorkDir', System.getProperty("java.io.tmpdir"))
     static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
+    static autostartBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("autostart"))
 	static projectWorkDir = requiredSysProp('projectWorkDir', System.getProperty("java.io.tmpdir"))
 	static outputDir = requiredSysProp('outputDir',System.getProperty("java.io.tmpdir"))
     
@@ -167,10 +168,15 @@ abstract class BaseSpec extends GebReportingSpec{
 
         def toExecute = completeCommand as String[]
         def dir
+        
         if(project)
             dir = new File(projectsBaseDir, project)
         else
             dir = new File(projectsBaseDir)
+        
+        if(!dir.exists()) {
+            dir = new File(autostartBaseDir, project)
+        }
         
         println "Running command: ${toExecute.join(" ")}"
         println "Base directory: $dir"
