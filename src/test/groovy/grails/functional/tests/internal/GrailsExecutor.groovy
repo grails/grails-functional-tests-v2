@@ -42,26 +42,36 @@ class GrailsExecutor {
         def buffer = new StringBuffer()
         process.consumeProcessOutput(buffer, buffer)
 
+        def isDebug = parent.isDebug()
+        waitForPort isDebug, port, {
+            println buffer
+            process.destroy()
+            Assert.fail("Failed to start server after timeout")
+        }, {
+            println buffer
+        }
+        parent.browser.baseUrl = "http://localhost:${port}/${ app ?: project}"
+        parent.processes << process
+    }
+
+    static int waitForPort(boolean isDebug, int port, Closure onFailure, Closure onSuccess) {
         int timeout = 0
         // allow longer to attach a debugger
-        def timeoutMax = parent.isDebug() ? 120000 : 60000
-        while(true) {
-            if(timeout > timeoutMax) {
-                println buffer
-                process.destroy()
-                Assert.fail("Failed to start server after timeout")
+        def timeoutMax = isDebug ? 120000 : 60000
+        while (true) {
+            if (timeout > timeoutMax) {
+                onFailure()
             }
-            if(Utils.isServerRunningOnPort(port)) {
-                println buffer
+            if (Utils.isServerRunningOnPort(port)) {
+                onSuccess()
                 break
             }
             else {
                 timeout += 100
-                sleep( 100 )                
+                sleep(100)
             }
         }
-        parent.browser.baseUrl = "http://localhost:${port}/${ app ?: project}"
-        parent.processes << process
+        return timeout
     }
 
     def runWar() {

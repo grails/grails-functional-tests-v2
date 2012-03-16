@@ -44,18 +44,68 @@ drivers.each { driver ->
         def projectWorkDir = new File(buildDir, 'project-work')
         def outputDir = new File(buildDir, 'output')
 
+        def appToPort = [:]
+        def grailsHome = System.properties['grails.home'] ?: new File('../grails-master').exists() ? new File('../grails-master').absolutePath : new File('../grails-core').absolutePath
+        def processes = []
+
+        def appsToStart = new File("autostart").listFiles().findAll() { File f -> f.isDirectory() && !f.isHidden()}
+        int port = 8890
+        for(File appDir in appsToStart) {
+            println "Autostarting application $appDir.name"
+            if(new File(appDir, "grails-app").exists()) {
+                appToPort.put(appDir, port++)
+            }
+        }
+
         doFirst {
             [grailsWorkDir, projectWorkDir, outputDir].each {
                 it.deleteDir()
                 assert it.mkdirs()
-            }	        
+            }	
+            
+            for(entry in appToPort) {
+                File appDir = entry.key
+                port = entry.value
+                println "Autostarting application $appDir.name"
+                if(new File(appDir, "grails-app").exists()) {
+                    // start app
+                    Thread.start {
+                        def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                        executeProcess(toExecute, appDir, grailsHome)
+
+                        toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                        process = executeProcess(toExecute, appDir, grailsHome)
+
+                        processes << process
+
+                    }
+
+                }
+            }
+        }
+
+        doLast {
+
+            for(Process p in processes) {
+                p.destroy()
+            }
+            processes.clear()
+            [grailsWorkDir, projectWorkDir, outputDir].each {
+                it.deleteDir()
+                assert it.mkdirs()
+            }
         }
         testReportDir = file("$reportsDir/$name/tests")
         testResultsDir = file("$buildDir/test-results/$name")
 
+        for (entry in appToPort) {
+
+            systemProperty "grails.app.port.$entry.key.name", entry.value
+        }
         systemProperty "geb.build.reportsDir", "$reportsDir/$name/geb"
         systemProperty "geb.env", driver
-        systemProperty 'grailsHome', System.properties['grails.home'] ?:  new File('../grails-master').exists() ? new File('../grails-master').absolutePath : new File('../grails-core').absolutePath
+
+        systemProperty 'grailsHome', grailsHome
         systemProperty 'grailsWorkDir',  grailsWorkDir.canonicalPath
         systemProperty 'projectWorkDir',  projectWorkDir.canonicalPath
         systemProperty 'outputDir', outputDir.canonicalPath
@@ -63,6 +113,30 @@ drivers.each { driver ->
 		// If you wanted to set the baseUrl in your build…
 		// systemProperty "geb.build.baseUrl", "http://myapp.com"
 	}
+}
+
+Process executeProcess(List toExecute, File appDir, grailsHome) {
+    println "Running command: ${toExecute}"
+    println "Base directory: $appDir"
+
+    
+    def process = (Process) new ProcessBuilder(toExecute).with {
+        redirectErrorStream(true)
+        directory(appDir.canonicalFile)
+        environment()["GRAILS_HOME"] = grailsHome
+        start()
+    }
+    def buffer = new StringBuffer()
+    process.consumeProcessOutput(buffer, buffer)
+    process.waitForOrKill(1000 * 60 * 5)
+    exitStatus = process.exitValue()
+    println buffer
+    return process
+}
+
+def buildCommand(String cmd, grailsHome, grailsWorkDir, projectWorkDir, appDir,int port) {
+    List<String> cmdList = [new File("${grailsHome}/bin/grails").canonicalPath, "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${appDir.name}".toString(), "--non-interactive".toString(), "-Dgrails.server.port.http=${port}".toString(), cmd.toString()]
+    return cmdList
 }
 
 task test(overwrite: true, dependsOn: drivers.collect { tasks["${it}Test"] })
