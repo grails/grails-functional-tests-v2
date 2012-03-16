@@ -38,6 +38,7 @@ dependencies {
 	}
 }
 
+
 drivers.each { driver ->
 	task "${driver}Test"(type: Test) {
         def grailsWorkDir = new File(buildDir, 'grails-work')
@@ -69,15 +70,15 @@ drivers.each { driver ->
                 println "Autostarting application $appDir.name"
                 if(new File(appDir, "grails-app").exists()) {
                     // start app
+                    def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                    def upgrade = createProcess(toExecute, grailsHome, appDir)
+                    toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                    process = createProcess(toExecute, grailsHome, appDir)
+                    processes << process
+
                     Thread.start {
-                        def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
-                        executeProcess(toExecute, appDir, grailsHome)
-
-                        toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
-                        process = executeProcess(toExecute, appDir, grailsHome)
-
-                        processes << process
-
+                        executeProcess(upgrade)
+                        executeProcess(process)
                     }
 
                 }
@@ -109,28 +110,32 @@ drivers.each { driver ->
         systemProperty 'grailsWorkDir',  grailsWorkDir.canonicalPath
         systemProperty 'projectWorkDir',  projectWorkDir.canonicalPath
         systemProperty 'outputDir', outputDir.canonicalPath
-		
+
+//        maxParallelForks = 4
+//        forkEvery = 4
 		// If you wanted to set the baseUrl in your build…
 		// systemProperty "geb.build.baseUrl", "http://myapp.com"
 	}
 }
 
-Process executeProcess(List toExecute, File appDir, grailsHome) {
+def executeProcess(Process process) {
+    def buffer = new StringBuffer()
+    process.consumeProcessOutput(buffer, buffer)
+    process.waitForOrKill(1000 * 60 * 5)
+    exitStatus = process.exitValue()
+    println buffer
+}
+
+Process createProcess(ArrayList<String> toExecute, grailsHome, appDir) {
     println "Running command: ${toExecute}"
     println "Base directory: $appDir"
 
-    
     def process = (Process) new ProcessBuilder(toExecute).with {
         redirectErrorStream(true)
         directory(appDir.canonicalFile)
         environment()["GRAILS_HOME"] = grailsHome
         start()
     }
-    def buffer = new StringBuffer()
-    process.consumeProcessOutput(buffer, buffer)
-    process.waitForOrKill(1000 * 60 * 5)
-    exitStatus = process.exitValue()
-    println buffer
     return process
 }
 
