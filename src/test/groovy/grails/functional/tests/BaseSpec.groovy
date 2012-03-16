@@ -17,7 +17,7 @@ abstract class BaseSpec extends GebReportingSpec{
 	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
 	static grailsWorkDir = requiredSysProp('grailsWorkDir', System.getProperty("java.io.tmpdir"))
     static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
-    static autostartBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("autostart"))
+    static autostartBaseDir = findChildOfRoot("autostart")
 	static projectWorkDir = requiredSysProp('projectWorkDir', System.getProperty("java.io.tmpdir"))
 	static outputDir = requiredSysProp('outputDir',System.getProperty("java.io.tmpdir"))
     
@@ -43,7 +43,7 @@ abstract class BaseSpec extends GebReportingSpec{
             current = current.parentFile
         }
 
-        return new File(current, "apps").absolutePath
+        return new File(current, name).absolutePath
     }
 
     /**
@@ -53,14 +53,46 @@ abstract class BaseSpec extends GebReportingSpec{
     def command
     def exitStatus
     def output
-	def project
     def projectDir
     static processes = []
     static cleanupDirectories = []
-    def port = BaseSpec.PORT
+    protected portInternal
+    protected projectInternal
+
+    String getProject() {
+        def classProject = System.getProperty("${this.getClass().name}.project")
+        if(classProject) {
+            return classProject
+        }
+        else if(this.projectInternal != null) {
+            return this.projectInternal
+        }
+    }
+    void setProject(String p) {
+        this.projectInternal = p
+    }
+    def getPort() {
+        def classPort = System.getProperty("${this.getClass().name}.port")
+        if(this.portInternal != null) {
+            return this.portInternal
+        }
+        else if(classPort) {
+            return classPort
+        }
+        else {
+            return BaseSpec.PORT
+        }
+    }
+    void setPort(p) {
+        this.portInternal = p
+    }
 
     void setup() {
-        browser.baseUrl = "http://localhost:${port}/$project"
+        if(getPort() != null && getProject() != null)    {
+
+            def url = "http://localhost:${getPort()}/${getProject()}/"
+            browser.baseUrl = url
+        }
     }
     void cleanup() {
         // workaround for Geb bug which fails with NPE on cleanup if no browser created
@@ -94,14 +126,14 @@ abstract class BaseSpec extends GebReportingSpec{
     }
 
     def grails(Closure callable) {
-        def executor = new GrailsExecutor(parent:this, project:project)
+        def executor = new GrailsExecutor(parent:this)
         callable.delegate = executor
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.call()
     }
 
     def grailsDebug(Closure callable) {
-        def executor = new GrailsExecutor(parent:this, project:project, debug:true)
+        def executor = new GrailsExecutor(parent:this, debug:true)
         callable.delegate = executor
         callable.resolveStrategy = Closure.DELEGATE_ONLY
         callable.call()

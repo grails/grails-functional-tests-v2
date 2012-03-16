@@ -11,7 +11,7 @@ class GrailsExecutor {
     @Delegate BaseSpec parent
     def invokeMethod(String name, Object args) {
         "${parent.debug ? 'executeDebug' : 'execute'}"(
-                project,
+                getProject(),
                 Utils.getCommandName(name),
                 *args)
     }
@@ -19,25 +19,25 @@ class GrailsExecutor {
     def createApp(String name) {
         BaseSpec.projectWorkDir = System.getProperty("java.io.tmpdir")
         execute(
-                project,
+                getProject(),
                 "create-app"
                 ,
                 name)
-        project = name
+        setProject(name)
         BaseSpec.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
-        parent.browser.baseUrl = "http://localhost:${parent.port}/${parent.project}"
+        parent.browser.baseUrl = "http://localhost:${getPort()}/${getProject()}"
         BaseSpec.upgradedProjects << name
     }
 
     def runApp(String app = null) {
 
-        def port = parent.port ?: BaseSpec.PORT
+        def port = getPort() ?: BaseSpec.PORT
         while(Utils.isServerRunningOnPort(port)) {
             port++
         }
-        parent.port = port
-        def project =  app ?: parent.project
-        parent.project = project
+        setPort(port)
+        def project =  app ?: getProject()
+        setProject(project)
         def process = debug ? executeDebugAsync( app ?: project, "run-app") : executeAsync( app ?: project, "run-app")
         def buffer = new StringBuffer()
         process.consumeProcessOutput(buffer, buffer)
@@ -50,7 +50,9 @@ class GrailsExecutor {
         }, {
             println buffer
         }
-        parent.browser.baseUrl = "http://localhost:${port}/${ app ?: project}"
+        def url = "http://localhost:${port}/${ app ?: project}/"
+
+        parent.browser.baseUrl = url 
         parent.processes << process
     }
 

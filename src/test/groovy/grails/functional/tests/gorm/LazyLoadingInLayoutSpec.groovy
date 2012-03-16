@@ -13,6 +13,8 @@ class LazyLoadingInLayoutSpec extends BaseApplicationSpec{
     
     void "Test that lazy loading in layouts works correctly"() {
         when:"A page that has a lazy association rendered in a layout"
+            println "BROWSER BASE URL IS ${browser.baseUrl}"
+            println "URL IS ${calculateUri('child/testLazyLoadInLayout', [:])}"
             go "child/testLazyLoadInLayout"
 
         then:"Then the response is returned correctly"
