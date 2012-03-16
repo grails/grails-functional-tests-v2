@@ -1,3 +1,7 @@
+import org.gradle.api.execution.TaskExecutionListener
+import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.*
+
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -87,17 +91,21 @@ drivers.each { driver ->
             }
         }
 
-        doLast {
-
-            for(Process p in processes) {
-                p.destroy()
-            }
-            processes.clear()
-            [grailsWorkDir, projectWorkDir, outputDir].each {
-                it.deleteDir()
-                assert it.mkdirs()
-            }
-        }
+        gradle.addListener(
+            [beforeExecute: { org.gradle.api.Task t ->},
+             afterExecute: {Task task, TaskState state ->
+                 if (task == test) {
+                     for(Process p in processes) {
+                         p.destroy()
+                     }
+                     processes.clear()
+                     [grailsWorkDir, projectWorkDir, outputDir].each {
+                         it.deleteDir()
+                         assert it.mkdirs()
+                     }
+                 }
+            }] as TaskExecutionListener
+        )
         testReportDir = file("$reportsDir/$name/tests")
         testResultsDir = file("$buildDir/test-results/$name")
 
