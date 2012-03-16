@@ -68,9 +68,7 @@ abstract class BaseApplicationSpec extends BaseSpec {
     }
     void setup() {
         this.project = getApplication()
-        println "SETUP RUNNING!!!"
         def url = "http://localhost:${getPort()}/${getApplication()}/"
-        println "SETTING BASE URL $url"
         this.browser.baseUrl = url
     }
 }
