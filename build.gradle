@@ -72,12 +72,14 @@ drivers.each { driver ->
                     // start app
                     def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
                     def upgrade = createProcess(toExecute, grailsHome, appDir)
+                    executeProcess(upgrade)
+
                     toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
                     process = createProcess(toExecute, grailsHome, appDir)
                     processes << process
 
                     Thread.start {
-                        executeProcess(upgrade)
+
                         executeProcess(process)
                     }
 
@@ -127,7 +129,7 @@ def executeProcess(Process process) {
 }
 
 Process createProcess(ArrayList<String> toExecute, grailsHome, appDir) {
-    println "Running command: ${toExecute}"
+    println "Running command: ${toExecute.join(' ')}"
     println "Base directory: $appDir"
 
     def process = (Process) new ProcessBuilder(toExecute).with {

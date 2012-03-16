@@ -51,7 +51,12 @@ abstract class BaseApplicationSpec extends BaseSpec {
 
     void cleanupSpec() {
         def app = getApplication()
-        silentDelete(new File("$projectsBaseDir/$app/target"))
+        def existingPort = System.getProperty("grails.app.port.$app")
+
+        if(existingPort == null) {
+            silentDelete(new File("$projectsBaseDir/$app/target"))
+        }
+
     }
     void setup() {
         this.project = getApplication()
