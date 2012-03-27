@@ -15,11 +15,11 @@ abstract class BaseSpec extends GebReportingSpec{
 	static upgradedProjects = []
 	
 	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
-	static grailsWorkDir = requiredSysProp('grailsWorkDir', System.getProperty("java.io.tmpdir"))
+	static grailsWorkDir = requiredSysProp('grailsWorkDir', new File("build/grails-work").canonicalPath)
     static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
     static autostartBaseDir = findChildOfRoot("autostart")
-	static projectWorkDir = requiredSysProp('projectWorkDir', System.getProperty("java.io.tmpdir"))
-	static outputDir = requiredSysProp('outputDir',System.getProperty("java.io.tmpdir"))
+	static projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
+	static outputDir = requiredSysProp('outputDir',new File("build/output"))
     
     static {
         if(!System.getProperty("geb.build.reportsDir")) {
