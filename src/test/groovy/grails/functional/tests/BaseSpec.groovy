@@ -192,7 +192,7 @@ abstract class BaseSpec extends GebReportingSpec{
 	private Process createProcess(boolean debug,String project, CharSequence[] command) {
 		if (project != null && !(project in upgradedProjects)) { upgradeProject(project) }
 		
-		def completeCommand = ["${grailsHome}/bin/${debug ? 'grails-debug' : 'grails'}", "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive", '--stacktrace']
+		def completeCommand = ["${grailsHome}/bin/${debug ? 'grails-debug' : 'grails'}", "-Dgrails.work.dir=${grailsWorkDir}/${project} -Dgrails.project.work.dir=${projectWorkDir}/${project}", "--non-interactive", '--stacktrace']
         if(port != null) {
             completeCommand << "-Dgrails.server.port.http=${port}"
         }
