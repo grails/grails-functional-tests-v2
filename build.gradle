@@ -169,8 +169,8 @@ Process createProcess(ArrayList<String> toExecute, grailsHome, appDir) {
 }
 
 def buildCommand(String cmd, grailsHome, grailsWorkDir, projectWorkDir, appDir,int port) {
-    List<String> cmdList = [new File("${grailsHome}/bin/grails").canonicalPath, "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${appDir.name}".toString(), "--non-interactive".toString(), "-Dgrails.server.port.http=${port}".toString(), cmd.toString()]
-    return cmdList
+    [new File("${grailsHome}/bin/grails").canonicalPath, "-Dgrails.work.dir=${grailsWorkDir} -Dgrails.project.work.dir=${projectWorkDir}/${appDir.name}".toString(), "--non-interactive".toString(), "--stacktrace", "-Dgrails.server.port.http=${port}".toString(), cmd.toString()]
+
 }
 
 task test(overwrite: true, dependsOn: drivers.collect { tasks["${it}Test"] })
