@@ -19,7 +19,7 @@ abstract class BaseSpec extends GebReportingSpec{
     static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
     static autostartBaseDir = findChildOfRoot("autostart")
 	static projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
-	static outputDir = requiredSysProp('outputDir',new File("build/output"))
+	static outputDir = requiredSysProp('outputDir',new File("build/output").canonicalPath)
     
     static {
         if(!System.getProperty("geb.build.reportsDir")) {
