@@ -44,6 +44,9 @@ dependencies {
 
 
 drivers.each { driver ->
+    def testSingle = System.getProperty("test.single")
+    if(testSingle)
+        System.setProperty("${driver}Test.single", testSingle)
 	task "${driver}Test"(type: Test) {
         def grailsWorkDir = new File(buildDir, 'grails-work')
         def projectWorkDir = new File(buildDir, 'project-work')
@@ -52,7 +55,7 @@ drivers.each { driver ->
         def appToPort = [:]
         def grailsHome = System.properties['grails.home'] ?: new File('../grails-master').exists() ? new File('../grails-master').absolutePath : new File('../grails-core').absolutePath
         def processes = []
-
+        boolean backgroundComplete = false
         def appsToStart = new File("autostart").listFiles().findAll() { File f -> f.isDirectory() && !f.isHidden()}
         int port = 8890
         for(File appDir in appsToStart) {
@@ -67,37 +70,53 @@ drivers.each { driver ->
                 it.deleteDir()
                 assert it.mkdirs()
             }	
-            
+            boolean appsStarted = false            
             for(entry in appToPort) {
                 File appDir = entry.key
                 port = entry.value
                 println "Autostarting application $appDir.name"
+
                 if(new File(appDir, "grails-app").exists()) {
                     // start app
-                    def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
-                    def upgrade = createProcess(toExecute, grailsHome, appDir)
-                    executeProcess(upgrade)
-
-                    toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
-                    process = createProcess(toExecute, grailsHome, appDir)
-                    processes << process
-
+                  
+                    appsStarted = true
                     Thread.start {
+                        try {
+                            def toExecute = buildCommand("upgrade", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                            def upgrade = createProcess(toExecute, grailsHome, appDir)
+                            executeProcess(upgrade)
 
-                        executeProcess(process)
+                            toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
+                            process = createProcess(toExecute, grailsHome, appDir)
+                            processes << process
+                            backgroundComplete = true
+                            executeProcess(process)
+                        }
+                        finally {
+                           backgroundComplete = true 
+                        }
                     }
 
                 }
             }
+            if(!appsStarted) {
+                backgroundComplete = true
+            }
+
         }
 
         gradle.addListener(
             [beforeExecute: { org.gradle.api.Task t ->},
              afterExecute: {Task task, TaskState state ->
-                 if (task == test) {
+                 if (task instanceof Test) {
+                     while(!backgroundComplete) {
+                         sleep 1000
+                     }
+                     
                      for(Process p in processes) {
                          p.destroy()
                      }
+                     
                      processes.clear()
                      [grailsWorkDir, projectWorkDir, outputDir].each {
                          it.deleteDir()
@@ -156,12 +175,4 @@ def buildCommand(String cmd, grailsHome, grailsWorkDir, projectWorkDir, appDir,i
 
 task test(overwrite: true, dependsOn: drivers.collect { tasks["${it}Test"] })
 
-tasks.addRule("Pattern: testSingle<Name> will test **/<Name>Tests.class") {String taskName ->
-    if (taskName.startsWith("testSingle")) {
-        drivers.each {
-            tasks["${it}Test"].includes = ['**/' + taskName.substring(10) + 'Spec.class']
-        }
-        tasks.add(name: taskName).dependsOn test
-    }
-}
 

@@ -54,7 +54,7 @@ class ShowPage extends Page {
         contains "Test 2 created"
     }
     static content = {
-        editButton(to: EditPage) { $('#_action_Edit') }
+        editButton(to: EditPage) { $('input', name:'_action_Edit') }
     }
 }
 class EditPage extends Page {
@@ -68,6 +68,6 @@ class EditPage extends Page {
     
     static content = {
         editForm { $('form') }
-        updateButton(to: EditPage) { $('#_action_Update') }
+        updateButton(to: EditPage) { $('input', '_action_Update') }
     }
 }

@@ -41,7 +41,7 @@ Tests are executed using standard Gradle test command:
 	
 Running a single test can be done with:
 
-	./gradlew testSingleRunApp
+	./gradlew -Dtest.single=RunApp test
 	
 Where "RunApp" above is the test name.
 
