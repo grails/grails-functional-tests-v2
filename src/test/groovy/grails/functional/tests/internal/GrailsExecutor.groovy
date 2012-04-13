@@ -17,7 +17,7 @@ class GrailsExecutor {
     }
 
     def createApp(String name) {
-        BaseSpec.projectWorkDir = System.getProperty("java.io.tmpdir")
+        BaseSpec.projectWorkDir = new File("build/project-work").canonicalPath
         execute(
                 getProject(),
                 "create-app"
