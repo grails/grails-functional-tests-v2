@@ -9,7 +9,7 @@ import org.junit.Assert
  */
 class GrailsExecutor {
     @Delegate BaseSpec parent
-    def invokeMethod(String name, Object args) {
+    def invokeMethod(String name, Object args) {   
         "${parent.debug ? 'executeDebug' : 'execute'}"(
                 getProject(),
                 Utils.getCommandName(name),
@@ -58,8 +58,8 @@ class GrailsExecutor {
 
     static int waitForPort(boolean isDebug, int port, Closure onFailure, Closure onSuccess) {
         int timeout = 0
-        // allow longer to attach a debugger
-        def timeoutMax = isDebug ? 120000 : 60000
+
+        def timeoutMax = 1000 * 60 * 5 // 5 mins
         while (true) {
             if (timeout > timeoutMax) {
                 onFailure()
