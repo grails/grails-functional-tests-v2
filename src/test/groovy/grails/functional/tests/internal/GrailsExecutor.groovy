@@ -60,10 +60,7 @@ class GrailsExecutor {
         int timeout = 0
 
         def timeoutMax = 1000 * 60 * 5 // 5 mins
-        while (true) {
-            if (timeout > timeoutMax) {
-                onFailure()
-            }
+        while (timeout > timeoutMax) {
             if (Utils.isServerRunningOnPort(port)) {
                 onSuccess()
                 break
@@ -73,6 +70,7 @@ class GrailsExecutor {
                 sleep(100)
             }
         }
+		onFailure()
         return timeout
     }
 
