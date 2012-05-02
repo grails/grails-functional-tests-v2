@@ -10,7 +10,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 @WebReport
 abstract class BaseSpec extends GebReportingSpec{
     
-	static PORT = 8184
+	static PORT = 9184
 	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 5 minutes
 	static upgradedProjects = []
 	
