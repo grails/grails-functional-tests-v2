@@ -11,7 +11,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 abstract class BaseSpec extends GebReportingSpec{
     
 	static PORT = 9184
-	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 5 minutes
+	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 2 minutes
 	static upgradedProjects = []
 	
 	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
@@ -215,7 +215,7 @@ abstract class BaseSpec extends GebReportingSpec{
 
         projectDir = dir
         (Process)new ProcessBuilder(toExecute).with {
-			redirectErrorStream(true)
+			redirectErrorStream(false)
             directory(dir)
 			environment()["GRAILS_HOME"] = grailsHome
 			start()

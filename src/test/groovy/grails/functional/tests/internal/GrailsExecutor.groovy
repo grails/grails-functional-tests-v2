@@ -38,13 +38,18 @@ class GrailsExecutor {
         setPort(port)
         def project =  app ?: getProject()
         setProject(project)
-        def process = debug ? executeDebugAsync( app ?: project, "run-app") : executeAsync( app ?: project, "run-app")
+        Process process = debug ? executeDebugAsync( app ?: project, "run-app") : executeAsync( app ?: project, "run-app")
         def buffer = new StringBuffer()
         process.consumeProcessOutput(buffer, buffer)
 
         def isDebug = parent.isDebug()
         waitForPort isDebug, port, {
             println buffer
+            try {
+                new URL("http://localhost:${port}").text // activate kill switch
+            } catch (e) {
+                // ignore
+            }
             process.destroy()
             Assert.fail("Failed to start server after timeout")
         }, {
@@ -63,7 +68,7 @@ class GrailsExecutor {
         while (timeout < timeoutMax) {
             if (Utils.isServerRunningOnPort(port)) {
                 onSuccess()
-                break
+                return timeout
             }
             else {
                 timeout += 100

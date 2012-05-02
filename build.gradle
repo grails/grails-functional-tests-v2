@@ -23,7 +23,7 @@ test {
 drivers = ["htmlunit"]
 
 dependencies {
-	groovy "org.codehaus.groovy:groovy-all:1.7.5"
+	groovy "org.codehaus.groovy:groovy-all:1.8.6"
 	
 	def gebVersion = "0.6.3"
 	def seleniumVersion = "2.0rc3"
