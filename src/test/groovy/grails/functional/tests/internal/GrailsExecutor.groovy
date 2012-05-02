@@ -9,7 +9,7 @@ import org.junit.Assert
  */
 class GrailsExecutor {
     @Delegate BaseSpec parent
-    def invokeMethod(String name, Object args) {
+    def invokeMethod(String name, Object args) {   
         "${parent.debug ? 'executeDebug' : 'execute'}"(
                 getProject(),
                 Utils.getCommandName(name),
@@ -17,7 +17,7 @@ class GrailsExecutor {
     }
 
     def createApp(String name) {
-        BaseSpec.projectWorkDir = System.getProperty("java.io.tmpdir")
+        BaseSpec.projectWorkDir = new File("build/project-work").canonicalPath
         execute(
                 getProject(),
                 "create-app"
@@ -58,12 +58,9 @@ class GrailsExecutor {
 
     static int waitForPort(boolean isDebug, int port, Closure onFailure, Closure onSuccess) {
         int timeout = 0
-        // allow longer to attach a debugger
-        def timeoutMax = isDebug ? 120000 : 60000
-        while (true) {
-            if (timeout > timeoutMax) {
-                onFailure()
-            }
+
+        def timeoutMax = 1000 * 60 * 5 // 5 mins
+        while (timeout < timeoutMax) {
             if (Utils.isServerRunningOnPort(port)) {
                 onSuccess()
                 break
@@ -73,6 +70,7 @@ class GrailsExecutor {
                 sleep(100)
             }
         }
+		onFailure()
         return timeout
     }
 
