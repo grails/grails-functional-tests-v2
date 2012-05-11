@@ -42,9 +42,5 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.1.5"
 
         build ":tomcat:$grailsVersion"
-
-        build ":release:1.0.1", {
-            excludes "http-builder"
-        }
     }
 }
