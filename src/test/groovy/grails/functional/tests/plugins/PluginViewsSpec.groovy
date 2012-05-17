@@ -14,9 +14,9 @@ class PluginViewsSpec extends BaseApplicationSpec {
         then:"The correct content is returned"
             title == "Database Dump"
             contains "<h1>Display Data</h1>"
-            $("a", text:'Database Info') != null
-            $("a", text: 'Display Data') != null
-            $("a", text:'Execute SQL') != null
+            $("a", text:'Database Info')
+            $("a", text: 'Display Data')
+            $("a", text:'Execute SQL')
     }
 
     void "Test resource load correctly"() {
