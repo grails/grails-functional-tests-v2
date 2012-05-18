@@ -31,6 +31,9 @@ grails.gorm.default.constraints = {
     beginsWithUpperCaseJ matches: /J.*/
 }
 
+
+grails.gorm.table.prefix.enabled = true
+
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
