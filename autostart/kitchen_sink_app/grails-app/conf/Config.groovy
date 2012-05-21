@@ -33,6 +33,7 @@ grails.gorm.default.constraints = {
 
 
 grails.gorm.table.prefix.enabled = true
+grails.gorm.namespaceThree.table.prefix.enabled = false
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000

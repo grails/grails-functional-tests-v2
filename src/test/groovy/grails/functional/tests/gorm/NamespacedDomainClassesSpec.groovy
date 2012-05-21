@@ -17,6 +17,8 @@ class NamespacedDomainClassesSpec extends BaseApplicationSpec {
         $('li', text: 'NAMESPACE_TWO_PHOTO_COLLECTION')
         $('li', text: 'SCRAP_BOOK')
         !$('li', text: 'NAMESPACE_ONE_SCRAP_BOOK')
+        $('li', text: 'AIRLINE')
+        !$('li', text: 'NAMESPACE_THREE_AIRLINE')
     }
 
     @Override
