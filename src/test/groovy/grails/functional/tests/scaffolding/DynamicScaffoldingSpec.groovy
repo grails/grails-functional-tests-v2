@@ -40,7 +40,7 @@ class DynamicScaffoldingSpec extends BaseSpec{
 package dynamic.scaffold.test
 
 class BookController {
-    static scaffold = 5
+    static scaffold = Book
 }
 '''
             sleep 5000
