@@ -25,6 +25,7 @@ class UrlMappings {
         }
 
         "/containsBean/$beanName"(controller: 'namespaceInspector', action: 'containsBean')
+        "/beanType/$beanName"(controller: 'namespaceInspector', action: 'beanType')
 
         "/"(view:"/index")
         "500"(view:'/error')

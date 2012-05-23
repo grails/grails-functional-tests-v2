@@ -7,6 +7,10 @@ class NamespaceInspectorController {
         render "Contains bean '${beanName}'? ${grailsApplication.mainContext.containsBean(beanName)}"
     }
 	
+    def beanType(String beanName) {
+        render "${beanName} is an instance of ${grailsApplication.mainContext.getBean(beanName).class.name}"
+    }
+    
 	def showTableNames() {
         def conn = dataSource.connection
         def metaData = conn.metaData
