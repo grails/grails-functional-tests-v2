@@ -10,4 +10,6 @@ beans = {
     widget(Widget) {
         name = 'Good Name'
     }
+
+    goalPropertyEditorRegistrar(structurededitor.GoalPropertyEditorRegistrar)
 }
