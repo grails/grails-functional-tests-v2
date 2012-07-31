@@ -27,6 +27,25 @@ class UrlMappings {
         "/containsBean/$beanName"(controller: 'namespaceInspector', action: 'containsBean')
         "/beanType/$beanName"(controller: 'namespaceInspector', action: 'beanType')
 
+        '/pluginOneFirstController' {
+            controller = 'first'
+            action = 'index'
+            plugin = 'namespaceOne'
+        }
+        '/pluginTwoFirstController' {
+            controller = 'first'
+            action = 'index'
+            plugin = 'namespaceTwo'
+        }
+        '/noPluginFirstController' {
+            controller = 'first'
+            action = 'index'
+        }
+        '/noPluginSecondController' {
+            controller = 'second'
+            action = 'index'
+        }
+
         "/"(view:"/index")
         "500"(view:'/error')
         "404"(controller: 'i18nError', action: 'pageNotFound')
