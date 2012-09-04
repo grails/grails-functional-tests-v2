@@ -38,7 +38,7 @@ dependencies {
 	drivers.each { driver ->
 		testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
 	}
-    groovy "org.codehaus.groovy:groovy-all:2.0.0"
+    groovy "org.codehaus.groovy:groovy-all:2.0.1"
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0-SNAPSHOT"
 }
 
