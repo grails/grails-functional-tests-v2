@@ -7,8 +7,8 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 repositories {
-    mavenRepo url: 'http://repo.grails.org/grails/core'
-    mavenRepo url: 'http://oss.sonatype.org/content/repositories/snapshots'
+    mavenCentral()
+	mavenRepo url:"https://nexus.codehaus.org/content/repositories/snapshots"
 }
 
 
@@ -23,12 +23,14 @@ test {
 drivers = ["htmlunit"]
 
 dependencies {
+	groovy "org.codehaus.groovy:groovy-all:1.8.6"
 	
 	def gebVersion = "0.6.3"
 	def seleniumVersion = "2.0rc3"
 	
 	// If using Spock, need to depend on geb-spock
 	testCompile "org.codehaus.geb:geb-spock:$gebVersion"
+	testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
 	
 	// If using JUnit, need to depend on geb-junit (3 or 4)
 	testCompile "org.codehaus.geb:geb-junit4:$gebVersion"
@@ -38,8 +40,6 @@ dependencies {
 	drivers.each { driver ->
 		testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
 	}
-    groovy "org.codehaus.groovy:groovy-all:2.0.1"
-    testCompile "org.spockframework:spock-core:0.7-groovy-2.0-SNAPSHOT"
 }
 
 
