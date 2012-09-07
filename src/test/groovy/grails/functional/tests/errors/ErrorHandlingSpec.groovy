@@ -17,8 +17,6 @@ class ErrorHandlingSpec extends BaseApplicationSpec{
         then:"The right status code and content is returned"
             assertStatus 500
             contains 'Grails Runtime Exception'
-            $('#spinner')
-            $('div', class:'logo')
     }
 
     void "Test declarative exception handling"() {
