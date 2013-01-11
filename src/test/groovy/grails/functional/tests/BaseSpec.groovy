@@ -12,25 +12,26 @@ abstract class BaseSpec extends GebReportingSpec{
     
 	static PORT = 9184
 	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 2 minutes
-	static upgradedProjects = []
-	
-	static grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
-	static grailsWorkDir = requiredSysProp('grailsWorkDir', new File("build/grails-work").canonicalPath)
-    static projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
-    static autostartBaseDir = findChildOfRoot("autostart")
-	static projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
-	static outputDir = requiredSysProp('outputDir',new File("build/output").canonicalPath)
-    
-    static {
-        if(!System.getProperty("geb.build.reportsDir")) {
-            System.setProperty("geb.build.reportsDir",outputDir)
-        }
-    }
-	
-	@Lazy static grailsVersion = {
+
+	def upgradedProjects = []
+	def grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
+	def grailsWorkDir = requiredSysProp('grailsWorkDir', new File("build/grails-work").canonicalPath)
+    def projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
+    def autostartBaseDir = findChildOfRoot("autostart")
+	def projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
+	def outputDir = requiredSysProp('outputDir',new File("build/output").canonicalPath)
+
+
+
+	@Lazy def grailsVersion = {
 		new File(grailsHome, "build.properties").withReader { def p = new Properties(); p.load(it); p.'grails.version' }
 	}()
 
+    def setupSpec() {
+        if(!System.getProperty("geb.build.reportsDir")) {
+            System.setProperty("geb.build.reportsDir", requiredSysProp('outputDir',new File("build/output").canonicalPath))
+        }
+    }
 	static requiredSysProp(prop, defaultValue = null) {
         def value = System.getProperty(prop) ?: defaultValue
 		assert  value != null
@@ -54,8 +55,8 @@ abstract class BaseSpec extends GebReportingSpec{
     def exitStatus
     def output
     def projectDir
-    static processes = []
-    static cleanupDirectories = []
+    def processes = []
+    def cleanupDirectories = []
     protected portInternal
     protected projectInternal
 
@@ -87,7 +88,9 @@ abstract class BaseSpec extends GebReportingSpec{
         this.portInternal = p
     }
 
+
     void setup() {
+
         if(getPort() != null && getProject() != null)    {
 
             def url = "http://localhost:${getPort()}/${getProject()}/"
@@ -99,20 +102,18 @@ abstract class BaseSpec extends GebReportingSpec{
         if(browser == null) {
             browser = new Browser()
         }
-    }
-    void cleanupSpec() {
-
         for(Process p in processes) {
             p.destroy()
         }
         processes.clear()
-        
+
         for(File dir in cleanupDirectories) {
             silentDelete(dir)
         }
         cleanupDirectories.clear()
         silentDelete(new File(grailsWorkDir))
         silentDelete(new File(outputDir))
+
     }
 
     protected silentDelete(File dir) {

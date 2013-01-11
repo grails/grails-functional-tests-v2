@@ -17,16 +17,16 @@ class GrailsExecutor {
     }
 
     def createApp(String name) {
-        BaseSpec.projectWorkDir = new File("build/project-work").canonicalPath
+        parent.projectWorkDir = new File("build/project-work").canonicalPath
         execute(
                 getProject(),
                 "create-app"
                 ,
                 name)
         setProject(name)
-        BaseSpec.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
+        parent.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
         parent.browser.baseUrl = "http://localhost:${getPort()}/${getProject()}"
-        BaseSpec.upgradedProjects << name
+        parent.upgradedProjects << name
     }
 
     def runApp(String app = null) {

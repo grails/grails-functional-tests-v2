@@ -57,7 +57,7 @@ abstract class BaseApplicationSpec extends BaseSpec {
         }
     }
 
-    void cleanupSpec() {
+    void cleanup() {
         def app = getApplication()
         def existingPort = System.getProperty("grails.app.port.$app")
 
