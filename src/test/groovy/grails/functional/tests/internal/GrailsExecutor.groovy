@@ -24,7 +24,7 @@ class GrailsExecutor {
                 ,
                 name)
         setProject(name)
-        parent.cleanupDirectories << new File(BaseSpec.projectsBaseDir, name)
+        parent.cleanupDirectories << new File(parent.projectsBaseDir, name)
         parent.browser.baseUrl = "http://localhost:${getPort()}/${getProject()}"
         parent.upgradedProjects << name
     }
