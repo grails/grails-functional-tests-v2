@@ -6,6 +6,7 @@ import geb.Browser
 import org.apache.commons.io.FileUtils
 import geb.spock.GebReportingSpec
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import spock.lang.Shared
 
 @WebReport
 abstract class BaseSpec extends GebReportingSpec{
@@ -13,15 +14,20 @@ abstract class BaseSpec extends GebReportingSpec{
 	static PORT = 9184
 	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 2 minutes
 
-	def upgradedProjects = []
-	def grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
-	def grailsWorkDir = requiredSysProp('grailsWorkDir', new File("build/grails-work").canonicalPath)
-    def projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
-    def autostartBaseDir = findChildOfRoot("autostart")
-	def projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
-	def outputDir = requiredSysProp('outputDir',new File("build/output").canonicalPath)
+	@Shared upgradedProjects = []
+    @Shared grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
+    @Shared grailsWorkDir = requiredSysProp('grailsWorkDir', new File("build/grails-work").canonicalPath)
+    @Shared projectsBaseDir = requiredSysProp('projectsBaseDir', findChildOfRoot("apps"))
+    @Shared autostartBaseDir = findChildOfRoot("autostart")
+    @Shared projectWorkDir = requiredSysProp('projectWorkDir', new File("build/project-work").canonicalPath)
+    @Shared outputDir = requiredSysProp('outputDir',new File("build/output").canonicalPath)
 
 
+    static {
+        if(!System.getProperty("geb.build.reportsDir")) {
+            System.setProperty("geb.build.reportsDir",requiredSysProp('outputDir',new File("build/output").canonicalPath))
+        }
+    }
 
 	@Lazy def grailsVersion = {
 		new File(grailsHome, "build.properties").withReader { def p = new Properties(); p.load(it); p.'grails.version' }
@@ -55,8 +61,8 @@ abstract class BaseSpec extends GebReportingSpec{
     def exitStatus
     def output
     def projectDir
-    def processes = []
-    def cleanupDirectories = []
+    @Shared processes = []
+    @Shared cleanupDirectories = []
     protected portInternal
     protected projectInternal
 
