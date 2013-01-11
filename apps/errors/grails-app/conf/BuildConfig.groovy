@@ -24,6 +24,8 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        build "org.grails:grails-plugin-tomcat:$grailsVersion"
+        runtime "org.grails:grails-plugin-hibernate:$grailsVersion"
     }
     
     dependencies {
