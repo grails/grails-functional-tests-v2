@@ -13,7 +13,7 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         grailsCentral()
-
+        mavenRepo "http://repo.grails.org/grails/core"
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         //mavenLocal()
@@ -33,6 +33,6 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":jsecurity:0.3"
+        compile ":shiro:1.1.4"
     }
 }

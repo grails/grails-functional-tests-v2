@@ -40,7 +40,7 @@ abstract class BaseApplicationSpec extends BaseSpec {
         return getApplication()
     }
 
-    void setupSpec() {
+    def setupSpec() {
         def app = getApplication()
         if(shouldStartApp()) {
             if(isDebug()) {

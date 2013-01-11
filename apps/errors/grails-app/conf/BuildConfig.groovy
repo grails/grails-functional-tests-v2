@@ -15,6 +15,7 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         grailsCentral()
+        mavenRepo "http://repo.grails.org/grails/core"
 
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
@@ -24,14 +25,15 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
-        build "org.grails:grails-plugin-tomcat:$grailsVersion"
-        runtime "org.grails:grails-plugin-hibernate:$grailsVersion"
     }
     
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         // runtime 'mysql:mysql-connector-java:5.1.13'
+        build "org.grails:grails-plugin-tomcat:$grailsVersion"
+        runtime "org.grails:grails-plugin-hibernate:$grailsVersion"
+
         runtime 'hsqldb:hsqldb:1.8.0.10'
     }
 }

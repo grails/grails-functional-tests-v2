@@ -64,7 +64,7 @@ class GrailsExecutor {
     static int waitForPort(boolean isDebug, int port, Closure onFailure, Closure onSuccess) {
         int timeout = 0
 
-        def timeoutMax = 1000 * 60 * 5 // 5 mins
+        def timeoutMax = BaseSpec.PROCESS_TIMEOUT_MILLS
         while (timeout < timeoutMax) {
             if (Utils.isServerRunningOnPort(port)) {
                 onSuccess()

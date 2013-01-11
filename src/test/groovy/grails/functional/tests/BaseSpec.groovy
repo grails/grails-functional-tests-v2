@@ -12,7 +12,7 @@ import spock.lang.Shared
 abstract class BaseSpec extends GebReportingSpec{
     
 	static PORT = 9184
-	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 5 // 2 minutes
+	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 1 // 1 minutes
 
 	@Shared upgradedProjects = []
     @Shared grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath

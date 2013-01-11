@@ -17,10 +17,16 @@ test {
         maxParallelForks = project.maxParallelForks as int
     if (project.hasProperty('forkEvery')) 
         forkEvery = project.forkEvery as int
+
+
+     testLogging.showStandardStreams = true
 }
 
 // The drivers we want to use
-drivers = ["htmlunit"]
+ext {
+    drivers = ["htmlunit"]    
+}
+
 
 dependencies {
 	groovy "org.codehaus.groovy:groovy-all:1.8.6"
@@ -87,7 +93,7 @@ drivers.each { driver ->
                             executeProcess(upgrade)
 
                             toExecute = buildCommand("run-app", grailsHome, grailsWorkDir, projectWorkDir, appDir,port)
-                            process = createProcess(toExecute, grailsHome, appDir)
+                            def process = createProcess(toExecute, grailsHome, appDir)
                             processes << process
                             backgroundComplete = true
                             executeProcess(process)
@@ -151,7 +157,7 @@ def executeProcess(Process process) {
     def buffer = new StringBuffer()
     process.consumeProcessOutput(buffer, buffer)
     process.waitForOrKill(1000 * 60 * 5)
-    exitStatus = process.exitValue()
+    def exitStatus = process.exitValue()
     println buffer
 }
 
