@@ -11,7 +11,6 @@ grails.project.dependency.resolution = {
         // excludes 'ehcache'
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
-    cacheDir "target/ivy-cache"
     repositories {
         grailsPlugins()
         grailsHome()
