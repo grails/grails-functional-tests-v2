@@ -2,6 +2,7 @@ grails.plugin.location.'db-util' = "../../plugins/grails-db-util"
 grails.plugin.location.'resources-to-copy' = "../../plugins/resources-to-copy"
 grails.project.work.dir = "target/work"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits( "global" ) {
@@ -28,11 +29,12 @@ grails.project.dependency.resolution = {
 
         // runtime 'mysql:mysql-connector-java:5.1.5'
         runtime 'hsqldb:hsqldb:1.8.0.10'
-        build "org.grails:grails-plugin-tomcat:$grailsVersion"
-        runtime "org.grails:grails-plugin-hibernate:$grailsVersion"
     }
 
     plugins {
         compile ":shiro:1.1.4"
+        runtime ":hibernate:3.6.10.BUILD-SNAPSHOT"
+        build ":tomcat:7.0.37.BUILD-SNAPSHOT"
+        
     }
 }

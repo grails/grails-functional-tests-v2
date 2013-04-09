@@ -4,6 +4,7 @@ grails.plugin.location.'namespace-two' = "${basedir}/plugins/namespace-two"
 grails.plugin.location.'namespace-three' = "${basedir}/plugins/namespace-three"
 
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.dependency.resolver="maven"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -26,8 +27,10 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
     plugins {
-        runtime ":tomcat:$grailsVersion"
-        runtime ":hibernate:$grailsVersion"
+        runtime ":hibernate:3.6.10.BUILD-SNAPSHOT"
+        build ":tomcat:7.0.37.BUILD-SNAPSHOT"
+        runtime ":build-test-data:1.1.1"
+        runtime ":db-util:0.4"
 	}
     
     dependencies {
