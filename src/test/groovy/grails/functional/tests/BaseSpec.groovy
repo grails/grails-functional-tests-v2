@@ -12,7 +12,7 @@ import spock.lang.Shared
 abstract class BaseSpec extends GebReportingSpec{
     
 	static PORT = 9184
-	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 1 // 1 minutes
+	static PROCESS_TIMEOUT_MILLS = 1000 * 60 * 2 // 1 minutes
 
 	@Shared upgradedProjects = []
     @Shared grailsHome = new File(requiredSysProp('grailsHome', "../grails-master")).canonicalPath
@@ -108,6 +108,14 @@ abstract class BaseSpec extends GebReportingSpec{
         if(browser == null) {
             browser = new Browser()
         }
+
+
+    }
+    void cleanupSpec() {
+        try {
+            new URL("http://localhost:${getPort()+1}/").getText(connectTimeout: 150, readTimeout: 150)
+        } catch (e) {
+        }
         for(Process p in processes) {
             p.destroy()
         }
@@ -119,7 +127,6 @@ abstract class BaseSpec extends GebReportingSpec{
         cleanupDirectories.clear()
         silentDelete(new File(grailsWorkDir))
         silentDelete(new File(outputDir))
-
     }
 
     protected silentDelete(File dir) {
