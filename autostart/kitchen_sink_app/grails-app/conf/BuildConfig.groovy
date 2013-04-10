@@ -1,3 +1,5 @@
+grails.plugin.location.'db-util' = "../../plugins/grails-db-util"
+grails.plugin.location.'resources-to-copy' = "../../plugins/resources-to-copy"
 grails.plugin.location.'plugin-views' = "${basedir}/plugins/plugin-views-0.1"
 grails.plugin.location.'namespace-one' = "${basedir}/plugins/namespace-one"
 grails.plugin.location.'namespace-two' = "${basedir}/plugins/namespace-two"
@@ -30,7 +32,7 @@ grails.project.dependency.resolution = {
         runtime ":hibernate:3.6.10.BUILD-SNAPSHOT"
         build ":tomcat:7.0.37.BUILD-SNAPSHOT"
         runtime ":build-test-data:1.1.1"
-        runtime ":db-util:0.4"
+//        runtime ":db-util:0.4"
 	}
     
     dependencies {

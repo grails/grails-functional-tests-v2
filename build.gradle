@@ -29,20 +29,23 @@ ext {
 
 
 dependencies {
-	groovy "org.codehaus.groovy:groovy-all:1.8.6"
+	groovy "org.codehaus.groovy:groovy-all:2.1.2"
 	
-	def gebVersion = "0.6.3"
-	def seleniumVersion = "2.0rc3"
+	def gebVersion = "0.9.0"
+	def seleniumVersion = "2.31.0"
 	
 	// If using Spock, need to depend on geb-spock
-	testCompile "org.codehaus.geb:geb-spock:$gebVersion"
-	testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
+	testCompile "org.gebish:geb-spock:$gebVersion"
+
+	testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 	
 	// If using JUnit, need to depend on geb-junit (3 or 4)
-	testCompile "org.codehaus.geb:geb-junit4:$gebVersion"
+	testCompile "org.gebish:geb-junit4:$gebVersion"
 	testCompile "junit:junit-dep:4.8.2"
 	
 	// Drivers
+    testCompile "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+//    testCompile "com.github.detro.ghostdriver:phantomjsdriver:1.0.1"
 	drivers.each { driver ->
 		testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
 	}
@@ -145,9 +148,11 @@ drivers.each { driver ->
         systemProperty 'grailsWorkDir',  grailsWorkDir.canonicalPath
         systemProperty 'projectWorkDir',  projectWorkDir.canonicalPath
         systemProperty 'outputDir', outputDir.canonicalPath
+//        jvmArgs '-Xdebug',
+//                '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
 
-//        maxParallelForks = 4
-//        forkEvery = 4
+//        maxParallelForks = 2
+//        forkEvery = 2
 		// If you wanted to set the baseUrl in your build…
 		// systemProperty "geb.build.baseUrl", "http://myapp.com"
 	}

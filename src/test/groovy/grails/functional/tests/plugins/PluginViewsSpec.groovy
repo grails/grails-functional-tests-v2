@@ -7,9 +7,10 @@ import grails.functional.tests.BaseApplicationSpec
  */
 class PluginViewsSpec extends BaseApplicationSpec {
 
+
     void "Test plugin view renders correctly"() {
         when:"A request for a plugin that renders a view is executed"
-            go "/test-plugins/dbUtil/data"
+            go "dbUtil/data"
 
         then:"The correct content is returned"
             title == "Database Dump"
@@ -19,27 +20,19 @@ class PluginViewsSpec extends BaseApplicationSpec {
             $("a", text:'Execute SQL')
     }
 
-    void "Test resource load correctly"() {
-        when:
-            go "/test-plugins/home/index"
-        then:
-            contains 'OK'
-    }
-
     /**
      * Tests that the &lt;g:resource> and &lt;g:javascript> tags include
      * the plugin context path in plugin views.
      */
     void "Test that resource tags include the plugin context path in resource links"() {
         when:"A plugin view is requested"
-            go "/test-plugins/dbUtil/data"
+            go "dbUtil/data"
 
         then:"The correct resource links are produced"
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/dbUtil.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/standard.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/standard.css')
-            $('script', type:'text/javascript', src:'/test-plugins/plugins/db-util-0.3/js/dojo.js')
-            $('script', type:'text/javascript', src:'/test-plugins/plugins/db-util-0.3/js/application.js')
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/dbUtil.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/standard.css\"/>"
+            contains "<script src=\"/kitchen_sink_app/plugins/db-util-0.3/js/dojo.js\" type=\"text/javascript\">"
+            contains "<script src=\"/kitchen_sink_app/plugins/db-util-0.3/js/application.js\" type=\"text/javascript\">"
             $('#pluginContext').text() == '/plugins/db-util-0.3'
     }
 
@@ -50,13 +43,13 @@ class PluginViewsSpec extends BaseApplicationSpec {
      */
     void "Test that no plugin context path is present if a plugin view is overriden by the application"() {
         when:"An application view that overrides a plugin view is requested"
-            go "/test-plugins/dbUtil/sql"
+            go "dbUtil/sql"
         then:"The correct resource links are produced"
-            $('link', rel:'stylesheet', href:'/test-plugins/css/main.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/css/other.css')
-            $('script', type:'text/javascript', src:'/test-plugins/js/app-layout.js')
-            $('script', type:'text/javascript', src:'/test-plugins/js/app.js')
-            $('script', type:'text/javascript', src:'/test-plugins/js/application.js')
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/css/main.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/css/other.css\"/>"
+            contains "<script src=\"/kitchen_sink_app/js/app-layout.js\" type=\"text/javascript\">"
+            contains "<script src=\"/kitchen_sink_app/js/app.js\" type=\"text/javascript\">"
+            contains "<script src=\"/kitchen_sink_app/js/application.js\" type=\"text/javascript\">"
 
     }
 
@@ -68,15 +61,16 @@ class PluginViewsSpec extends BaseApplicationSpec {
      */
     void "Test that an application layout used by a plugin view does not include plugin context page in links"() {
         when:"A plugin view with an application layout is requested"
-            go "/test-plugins/dbUtil/info"
+            go "dbUtil/info"
         then:"Then resource links in the layout don't include the plugin path whilst resource links in the plugin view do"
-            $('link', rel:'stylesheet', href:'/test-plugins/css/main.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/other.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/other-2.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/other-3.css')
-            $('script', type:'text/javascript', src:'/test-plugins/js/app-layout.js')
-            $('script', type:'text/javascript', src:'/test-plugins/js/application.js')
-            $('script', type:'text/javascript', src:'/test-plugins/plugins/db-util-0.3/js/plugin-info.js')
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/css/main.css\"/>"
+
+            contains "<script src=\"/kitchen_sink_app/js/app-layout.js\" type=\"text/javascript\">"
+            contains "<script src=\"/kitchen_sink_app/js/application.js\" type=\"text/javascript\">"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/other.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/other-2.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/other-3.css\"/>"
+            contains "<script src=\"/kitchen_sink_app/plugins/db-util-0.3/js/plugin-info.js\" type=\"text/javascript\">"
     }
 
     /**
@@ -87,20 +81,19 @@ class PluginViewsSpec extends BaseApplicationSpec {
      */
     void "Test that resource links are not rendered for a plugin view overridden by the application"() {
         when:"A plugin view overriden by the application that uses a plugin layout is rendered"
-            go "/test-plugins/dbUtil/testWithPluginLayout"
+            go "dbUtil/testWithPluginLayout"
         then:"The view links don't include the plugin path but the layout links do"
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/dbUtil.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/standard.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/plugins/db-util-0.3/css/oldstyle.css')
-            $('link', rel:'stylesheet', href:'/test-plugins/css/other.css')
-            $('script', type:'text/javascript', src:'/test-plugins/js/prototype/prototype.js')
-            $('script', type:'text/javascript', src:'/test-plugins/plugins/db-util-0.3/js/application.js')
-
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/dbUtil.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/standard.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/plugins/db-util-0.3/css/oldstyle.css\"/>"
+            contains "<link rel=\"stylesheet\" href=\"/kitchen_sink_app/css/other.css\"/>"
+            contains "<script src=\"/kitchen_sink_app/js/prototype/prototype.js\" type=\"text/javascript\">"
+            contains "<script src=\"/kitchen_sink_app/plugins/db-util-0.3/js/application.js\" type=\"text/javascript\">"
 
     }
 
     @Override
     String getApplication() {
-        "test-plugins"
+        "kitchen_sink_app"
     }
 }

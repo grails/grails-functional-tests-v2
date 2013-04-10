@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="layout" content="main"/>
+  <meta name="layout" content="main2"/>
   <title>Execute SQL</title>
   <link rel="stylesheet" href="${resource(dir:'css',file:'other.css')}" />
   <g:javascript src="app.js" />
