@@ -17,8 +17,9 @@ class FunctionalTestExecutionSpec extends BaseApplicationSpec{
                 testApp()
             }
         then:"Functional tests execute correctly"
-            exitStatus == 0
             output.contains  "Tests PASSED"
+            exitStatus == 0
+
     }
 
     @Override
